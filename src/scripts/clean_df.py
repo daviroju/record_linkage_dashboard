@@ -1,11 +1,8 @@
 import pandas as pd
-from scripts.db_load import df_goiaspen, df_projudi, df_bnmp
+from scripts.db_dump import df_1, df_2, df_3
 
-df_goiaspen_db = df_goiaspen.copy()
-df_bnmp_db = df_bnmp.copy()
-df_projudi_db = df_projudi.copy()
 
-print('GoiasPen:',len(df_goiaspen),'Projudi:', len(df_projudi),'BNMP:', len(df_bnmp))
+
 
 def preprocess_data(df, suffix):
     df_columns = df.columns.tolist()
@@ -52,9 +49,10 @@ def clean_df(value):
 
 
 def main():
-    df_goiaspen = preprocess_data(df_goiaspen_db, '')
-    df_projudi  = preprocess_data(df_projudi_db, '')
-    df_bnmp = preprocess_data(df_bnmp_db, '')
-    df_projudi.to_pickle('data/df_projudi.pkl')
-    df_bnmp.to_pickle('data/df_bnmp.pkl')
-    df_goiaspen.to_pickle('data/df_goiaspen.pkl')
+    df_1 = preprocess_data(df_1, '')
+    df_2  = preprocess_data(df_2, '')
+    df_3 = preprocess_data(df_3, '')
+
+    df_1.to_pickle('data/df_first.pkl')
+    df_2.to_pickle('data/df_second.pkl')
+    df_3.to_pickle('data/df_third.pkl')

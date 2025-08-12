@@ -16,26 +16,26 @@ def formatar_data(df):
     return df
 
 try:
-    df_projudi = formatar_data(pd.read_pickle('data/df_projudi.pkl')).sort_values('nome')
-    df_projudi['id'] = df_projudi['id'].apply(lambda x: int(x.split('_')[1]))
+    df_second = formatar_data(pd.read_pickle('data/df_second.pkl')).sort_values('nome')
+    df_second['id'] = df_second['id'].apply(lambda x: int(x.split('_')[1]))
 
 except Exception as e:
-    print(f"Error loading PROJUDI data: {e}")
-    df_projudi = pd.DataFrame(columns=['id', 'nome', 'nome_mae', 'data_nascimento', 'sexo', 'numero_cpf'])
-
-try:
-    df_bnmp = formatar_data(pd.read_pickle('data/df_bnmp.pkl')).sort_values('nome')
-    df_bnmp['id'] = df_bnmp['id'].apply(lambda x: int(x.split('_')[1]))
-except Exception as e:
-    print(f"Error loading BNMP data: {e}")
-    df_bnmp = pd.DataFrame(columns=['id', 'nome', 'nome_mae', 'data_nascimento', 'sexo', 'numero_cpf'])
+    print(f"Error loading second data: {e}")
+    df_second = pd.DataFrame(columns=['id', 'nome', 'nome_mae', 'data_nascimento', 'sexo', 'numero_cpf'])
 
 try:
-    df_goiaspen = formatar_data(pd.read_pickle('data/df_goiaspen.pkl')).sort_values('nome')
-    df_goiaspen['id'] = df_goiaspen['id'].apply(lambda x: int(x.split('_')[1]))
+    df_first = formatar_data(pd.read_pickle('data/df_first.pkl')).sort_values('nome')
+    df_first['id'] = df_first['id'].apply(lambda x: int(x.split('_')[1]))
 except Exception as e:
-    print(f"Error loading GOIASPEN data: {e}")
-    df_goiaspen = pd.DataFrame(columns=['id', 'nome', 'nome_mae', 'data_nascimento', 'sexo', 'numero_cpf'])
+    print(f"Error loading first data: {e}")
+    df_first = pd.DataFrame(columns=['id', 'nome', 'nome_mae', 'data_nascimento', 'sexo', 'numero_cpf'])
+
+try:
+    df_third = formatar_data(pd.read_pickle('data/df_third.pkl')).sort_values('nome')
+    df_third['id'] = df_third['id'].apply(lambda x: int(x.split('_')[1]))
+except Exception as e:
+    print(f"Error loading third data: {e}")
+    df_third = pd.DataFrame(columns=['id', 'nome', 'nome_mae', 'data_nascimento', 'sexo', 'numero_cpf'])
 
 try:
     df_principal = formatar_data(pd.read_pickle('data/df_no_cross.pkl'))
@@ -47,12 +47,12 @@ except Exception as e:
     df_principal = pd.DataFrame(columns=['id_x', 'id_y', 'score_total'])
     df_principal['score_total'] = 0
 
-df_bnmp['Fonte'] = 'BNMP'
-df_projudi['Fonte'] = 'PROJUDI'
-df_goiaspen['Fonte'] = 'GOIASPEN'
+df_first['Fonte'] = 'first'
+df_second['Fonte'] = 'second'
+df_third['Fonte'] = 'third'
 #%%
-df_projudi['numero_processo_projudi'] = df_projudi['numero_processo']
-df_bnmp['numero_processo_bnmp'] = df_bnmp['numero_processo']
+df_second['numero_processo_second'] = df_second['numero_processo']
+df_first['numero_processo_first'] = df_first['numero_processo']
 #%%
 #df_ids = df_principal['id_x'].tolist() + df_principal['id_y'].tolist()
 # count = 0
@@ -67,21 +67,21 @@ df_bnmp['numero_processo_bnmp'] = df_bnmp['numero_processo']
 #     return df
 
 
-# df_bnmp = take(df_bnmp, 'bnmp')
-# df_projudi = take(df_projudi, 'projudi')
-# df_goiaspen = take(df_goiaspen, 'goiaspen')
+# df_first = take(df_first, 'first')
+# df_second = take(df_second, 'second')
+# df_third = take(df_third, 'third')
 
-# df_bnmp.to_pickle('data/df_bnmp.pkl')
-# df_projudi.to_pickle('data/df_bnmp.pkl')
-# df_goiaspen.to_pickle('data/df_bnmp.pkl')
+# df_first.to_pickle('data/df_first.pkl')
+# df_second.to_pickle('data/df_first.pkl')
+# df_third.to_pickle('data/df_first.pkl')
 
 df_principal['tipo_x'] = df_principal['id_x'].str.extract(r'(\w+)_')
 df_principal['tipo_y'] = df_principal['id_y'].str.extract(r'(\w+)_')
 
 map_dfs = {
-    'bnmp': df_bnmp.set_index('id'),
-    'projudi': df_projudi.set_index('id'),
-    'goiaspen': df_goiaspen.set_index('id')
+    'first': df_first.set_index('id'),
+    'second': df_second.set_index('id'),
+    'third': df_third.set_index('id')
 }
 
 def style_css():
@@ -126,7 +126,7 @@ def generate_columns(df):
 
 def generate_related_columns(df):
     cols = ['id','nome', 'nome_mae', 'data_nascimento', 'sexo', 'score_total']
-    cols = ['Fonte','id','numero_processo_projudi', 'numero_processo_bnmp', 'nome', 'nome_mae', 'data_nascimento', 'numero_cpf', 'sexo', 'descricao_regime_prisional']
+    cols = ['Fonte','id','numero_processo_second', 'numero_processo_first', 'nome', 'nome_mae', 'data_nascimento', 'numero_cpf', 'sexo', 'descricao_regime_prisional']
     return [{"field": col, "headerName": col} for col in cols]
 
 dbc_css = style_css()
@@ -158,16 +158,16 @@ def create_related_col(label, id, df):
 
 app.layout = dbc.Container([
 
-    html.H4("🔍 SISTEMA DE BUSCA POR SIMILARIDADE - Controle de Prisões", className="text-center"),
+    html.H4("🔍 SISTEMA DE BUSCA POR SIMILARIDADE", className="text-center"),
     dbc.Row([
         dbc.Col([],md=1),
         dbc.Col([
             dbc.Card([
                 dbc.Tabs([
-                    create_tab("BNMP", "grid-bnmp", df_bnmp,),
-                    create_tab("PROJUDI", "grid-projudi", df_projudi,),
-                    create_tab("GOIASPEN", "grid-goiaspen", df_goiaspen,),
-                ], id="tabs-grids", active_tab="grid-bnmp")
+                    create_tab("first", "grid-first", df_first,),
+                    create_tab("second", "grid-second", df_second,),
+                    create_tab("third", "grid-third", df_third,),
+                ], id="tabs-grids", active_tab="grid-first")
             ])
         ], md=10),
         dbc.Col([],md=1)
@@ -191,9 +191,9 @@ app.layout = dbc.Container([
 
         dbc.Row([
             dbc.Col([], md=1),
-            create_related_col("Relacionamento:", "related-df", df_bnmp),
-            # create_related_col("PROJUDI", "related-projudi", df_projudi),
-            # create_related_col("GOIASPEN", "related-goiaspen", df_goiaspen),
+            create_related_col("Relacionamento:", "related-df", df_first),
+            # create_related_col("second", "related-second", df_second),
+            # create_related_col("third", "related-third", df_third),
             dbc.Col([], md=1),
         ])
 
@@ -201,45 +201,45 @@ app.layout = dbc.Container([
 
 
 # @app.callback(
-#     Output('related-bnmp-div', 'className'),
-#     Output('related-bnmp', 'className'),
-#     Output('related-projudi-div', 'className'),
-#     Output('related-goiaspen-div', 'className'),
-#     Input('grid-bnmp', 'selectedRows'),
-#     Input('grid-projudi', 'selectedRows'),
-#     Input('grid-goiaspen', 'selectedRows')
+#     Output('related-first-div', 'className'),
+#     Output('related-first', 'className'),
+#     Output('related-second-div', 'className'),
+#     Output('related-third-div', 'className'),
+#     Input('grid-first', 'selectedRows'),
+#     Input('grid-second', 'selectedRows'),
+#     Input('grid-third', 'selectedRows')
 # )
-# def update_layout(rows_bnmp, rows_projudi, rows_goiaspen):
+# def update_layout(rows_first, rows_second, rows_third):
     
-#     if rows_bnmp and len(rows_bnmp) > 0:
+#     if rows_first and len(rows_first) > 0:
 #         return "d-none","d-none", "col-md-6", "col-md-6"
 #     else:
 #         return  "col-md-4","col-md-4", "col-md-4", "col-md-4",
 
 
 @app.callback(
-    Output("grid-bnmp", "rowData"),
-    Output("grid-projudi", "rowData"),
-    Output("grid-goiaspen", "rowData"),
+    Output("grid-first", "rowData"),
+    Output("grid-second", "rowData"),
+    Output("grid-third", "rowData"),
     Input("tabs-grids", "active_tab")
 )
 def refresh_grid_data(active_tab):
     return (
-        df_bnmp.to_dict("records") if active_tab == "grid-bnmp" else dash.no_update,
-        df_projudi.to_dict("records") if active_tab == "grid-projudi" else dash.no_update,
-        df_goiaspen.to_dict("records") if active_tab == "grid-goiaspen" else dash.no_update,
+        df_first.to_dict("records") if active_tab == "grid-first" else dash.no_update,
+        df_second.to_dict("records") if active_tab == "grid-second" else dash.no_update,
+        df_third.to_dict("records") if active_tab == "grid-third" else dash.no_update,
     )
 
 @app.callback(
     Output("related-df", "rowData"),
-    # Output("related-projudi", "rowData"),
-    # Output("related-goiaspen", "rowData"),
-    Input("grid-bnmp", "selectedRows"),
-    Input("grid-projudi", "selectedRows"),
-    Input("grid-goiaspen", "selectedRows"),
+    # Output("related-second", "rowData"),
+    # Output("related-third", "rowData"),
+    Input("grid-first", "selectedRows"),
+    Input("grid-second", "selectedRows"),
+    Input("grid-third", "selectedRows"),
     # Input("score-slider", "value")
 )
-def update_related(bnmp_sel, projudi_sel, goiaspen_sel):
+def update_related(first_sel, second_sel, third_sel):
     sel_id = None
     tipo_origem = None
 
@@ -248,14 +248,14 @@ def update_related(bnmp_sel, projudi_sel, goiaspen_sel):
             return f"{source_type}_{selection[0]['id']}", source_type
         return None, None
 
-    if ctx.triggered_id == "grid-bnmp":
-        sel_id, tipo_origem = get_selection_info('bnmp', bnmp_sel)
-    elif ctx.triggered_id == "grid-projudi":
-        sel_id, tipo_origem = get_selection_info('projudi', projudi_sel)
-    elif ctx.triggered_id == "grid-goiaspen":
-        sel_id, tipo_origem = get_selection_info('goiaspen', goiaspen_sel)
+    if ctx.triggered_id == "grid-first":
+        sel_id, tipo_origem = get_selection_info('first', first_sel)
+    elif ctx.triggered_id == "grid-second":
+        sel_id, tipo_origem = get_selection_info('second', second_sel)
+    elif ctx.triggered_id == "grid-third":
+        sel_id, tipo_origem = get_selection_info('third', third_sel)
     elif ctx.triggered_id == "score-slider":
-        for source_type, selection in [('bnmp', bnmp_sel), ('projudi', projudi_sel), ('goiaspen', goiaspen_sel)]:
+        for source_type, selection in [('first', first_sel), ('second', second_sel), ('third', third_sel)]:
             sel_id, tipo_origem = get_selection_info(source_type, selection)
             if sel_id:
                 break
@@ -269,7 +269,7 @@ def update_related(bnmp_sel, projudi_sel, goiaspen_sel):
         (df_principal['score_total'] >= score_threshold)
     ]
 
-    results = {'bnmp': [], 'projudi': [], 'goiaspen': []}
+    results = {'first': [], 'second': [], 'third': []}
 
     for _, row in filtered.iterrows():
         if row['id_x'] == sel_id:
@@ -291,18 +291,18 @@ def update_related(bnmp_sel, projudi_sel, goiaspen_sel):
                 continue
 
 
-    df_bnmp = pd.DataFrame.from_dict(results['bnmp'])
-    df_projudi = pd.DataFrame.from_dict(results['projudi'])
-    df_goiaspen = pd.DataFrame.from_dict(results['goiaspen'])
+    df_first = pd.DataFrame.from_dict(results['first'])
+    df_second = pd.DataFrame.from_dict(results['second'])
+    df_third = pd.DataFrame.from_dict(results['third'])
 
-    df_full = pd.concat([df_bnmp, df_projudi, df_goiaspen])
+    df_full = pd.concat([df_first, df_second, df_third])
     # df_full[['Fonte','id','numero_processo', 'nome', 'nome_mae', 'data_nascimento', 'numero_cpf', 'sexo', 'descricao_regime_prisional', 'Encontrado']] = ''
     # df_full = df_full[]['Fonte','id','numero_processo', 'nome', 'nome_mae', 'data_nascimento', 'numero_cpf', 'sexo', 'descricao_regime_prisional', 'Encontrado']
     full_dict = df_full.to_dict('records')
 
     # print(df_full)
 
-    # return full_dict, results['projudi'], results['goiaspen']
+    # return full_dict, results['second'], results['third']
     return full_dict
 
 
